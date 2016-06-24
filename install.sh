@@ -34,8 +34,3 @@ mkdir -p /var/www/htdocs/.well-known/acme-challenge/
 
 # Run letsrenew.sh file for initial connect and/or renewal, doesn't matter
 bash /config/letsencrypt/letsrenew.sh
-
-# Create a combined pem file, replace the vanilla server.pem with it, and restart lighttpd.
-cat /config/letsencrypt/signed.crt /config/letsencrypt/domain.key > /etc/lighttpd/server.pem
-ps -e | grep lighttpd | awk '{print $1;}' | xargs -r kill
-/usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf

@@ -14,15 +14,19 @@ curl -o /config/scripts/post-config.d/install_letsencrypt.sh https://raw.githubu
 chmod 755 /config/scripts/post-config.d/install_letsencrypt.sh
 
 # Generate certifications which will be used
+# If this step fails, try to run genrsa command in your local PC and upload the generated keys.
 openssl genrsa 4096 | tee /config/letsencrypt/account.key
 openssl genrsa 4096 | tee /config/letsencrypt/domain.key
-openssl req -new -sha256 -key domain.key -subj "/CN=$fqdn" | tee /config/letsencrypt/domain.csr
+
+# Generate certificate signing request.
+openssl req -new -sha256 -key /config/letsencrypt/domain.key -subj "/CN=$fqdn" | tee /config/letsencrypt/domain.csr
 
 # Making lighttpd configurations and restarting daemon
 mkdir /config/lighttpd/
 curl -o /config/lighttpd/lighttpd.conf https://raw.githubusercontent.com/rholmboe/ubnt-letsencrypt/master/lighttpd.conf
 ln -sf /config/lighttpd/lighttpd.conf /etc/lighttpd/lighttpd.conf
-ps -e | grep lighttpd | awk '{print $1;}' | xargs kill
+# At the first run, lighttpd should use the ubnt default server.pem.
+ps -e | grep lighttpd | awk '{print $1;}' | xargs -r kill
 /usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf
 
 # Create acme respons directory
@@ -30,3 +34,8 @@ mkdir -p /var/www/htdocs/.well-known/acme-challenge/
 
 # Run letsrenew.sh file for initial connect and/or renewal, doesn't matter
 bash /config/letsencrypt/letsrenew.sh
+
+# Create a combined pem file, replace the vanilla server.pem with it, and restart lighttpd.
+cat /config/letsencrypt/signed.crt /config/letsencrypt/domain.key > /etc/lighttpd/server.pem
+ps -e | grep lighttpd | awk '{print $1;}' | xargs -r kill
+/usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf

@@ -13,7 +13,7 @@ For starters, You'll need:
 
 Please note you are opening your edgerouter to the outside world. Please use common sense and use a strong password and common security best practices.
 
-## Installation
+## Installation for the first time
 
 SSH into your EdgeRouter and issue following command
 
@@ -23,3 +23,16 @@ curl https://raw.githubusercontent.com/photinus/ubnt-letsencrypt/master/install.
 *Important* is to enter your external FQDN
 
 If everything went well you should have a shiny green lock icon next time you visit your Edgerouter's GUI.
+
+## Installation after router reset
+
+```
+sudo bash /config/letsencrypt/install_letsencrypt.sh
+```
+
+## Manaul certificate renewall
+
+```
+sudo bash /config/letsencrypt/letsrenew.sh
+```
+

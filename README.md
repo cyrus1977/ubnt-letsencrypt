@@ -30,7 +30,7 @@ If everything went well you should have a shiny green lock icon next time you vi
 sudo bash /config/letsencrypt/install_letsencrypt.sh
 ```
 
-## Manaul certificate renewall
+## Manual certificate renewal
 
 ```
 sudo bash /config/letsencrypt/letsrenew.sh
